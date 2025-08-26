@@ -8,7 +8,7 @@ import { useAuth } from '../../contexts/AuthContext.jsx'
 
 export default function Room(){
   const { id } = useParams()
-  const { state, funfacts, joinedMode, joinAsParticipant, viewAsSpectator, startDraw, sendReaction } = useRoom(id)
+  const { state, funfacts, joinedMode, viewAsSpectator, startDraw, sendReaction } = useRoom(id)
   const [shake, setShake] = React.useState(false)
   const [lastWinner, setLastWinner] = React.useState(null)
   const { user } = useAuth()
@@ -28,17 +28,13 @@ export default function Room(){
 
   if(!state.room){
     return (
-      <div className="text-center text-slate-600">Memuat room…
-        <div className="mt-4 flex gap-2 justify-center">
-          <button onClick={joinAsParticipant} className="px-3 py-2 rounded-lg bg-slate-900 text-white text-sm">Gabung sebagai Peserta</button>
-          <button onClick={viewAsSpectator} className="px-3 py-2 rounded-lg bg-slate-700 text-white text-sm">Masuk sebagai Penonton</button>
-        </div>
+      <div className="text-center text-slate-600">
+        Memuat room…
       </div>
     )
   }
 
   const isHost = state.room.adminId === user?.id
-  const canSendChat = joinedMode === 'participant'
 
   return (
     <div className="relative space-y-4">
@@ -47,11 +43,14 @@ export default function Room(){
       <div className="bg-white rounded-2xl shadow p-4 flex items-center justify-between">
         <div>
           <div className="font-semibold text-slate-800">{state.room.name}</div>
-          <div className="text-sm text-slate-600">Peserta {state.participants.length}/{state.room.capacity} • Status {state.room.status}</div>
+          <div className="text-sm text-slate-600">
+            Peserta {state.participants.length}/{state.room.capacity} • Status {state.room.status}
+            {joinedMode === 'participant' && ' • Anda Peserta'}
+            {joinedMode === 'spectator' && ' • Anda Penonton'}
+            {isHost && ' • Anda Admin'}
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          {joinedMode !== 'participant' && <button onClick={joinAsParticipant} className="px-3 py-2 rounded-lg bg-slate-900 text-white text-sm">Gabung Peserta</button>}
-          {joinedMode !== 'spectator' && <button onClick={viewAsSpectator} className="px-3 py-2 rounded-lg bg-slate-700 text-white text-sm">Masuk Penonton</button>}
           {isHost && <button onClick={()=>{ setShake(true); setTimeout(()=>setShake(false), 3000); startDraw(); }} className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm">Kocok</button>}
           <QuickReactions onSend={sendReaction} />
         </div>
@@ -91,15 +90,6 @@ export default function Room(){
           </ul>
         </div>
       </div>
-
-      <div className="bg-white rounded-2xl shadow p-4">
-        <React.Suspense fallback={<div>Loading chat...</div>}>
-          <ChatPanel roomId={id} canSend={canSendChat} />
-        </React.Suspense>
-      </div>
     </div>
   )
 }
-
-// Lazy load ChatPanel component
-const ChatPanel = React.lazy(() => import('./components/ChatPanel.jsx'))

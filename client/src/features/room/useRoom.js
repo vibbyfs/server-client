@@ -10,7 +10,25 @@ export default function useRoom(roomId){
 
   React.useEffect(() => {
     if(!socket || !roomId) return
-    function onState(payload){ setState(payload) }
+    
+    // Auto-join as spectator initially to get room data
+    socket.emit('room:view', { roomId: Number(roomId) })
+    
+    function onState(payload){ 
+      setState(payload)
+      // Auto-detect if user is already a participant
+      const userStr = localStorage.getItem('arisan.user')
+      if (userStr && payload.participants) {
+        const user = JSON.parse(userStr)
+        const isParticipant = payload.participants.some(p => p.userId === user.id)
+        if (isParticipant && !joinedMode) {
+          setJoinedMode('participant')
+          socket.emit('room:join', { roomId: Number(roomId) })
+        } else if (!joinedMode) {
+          setJoinedMode('spectator')
+        }
+      }
+    }
     function onDrawBegin(){ /* handled in UI via props/state if needed */ }
     socket.on('room:state', onState)
     socket.on('draw:begin', onDrawBegin)
@@ -21,15 +39,16 @@ export default function useRoom(roomId){
       socket.off('draw:begin', onDrawBegin)
       socket.off('draw:result', fetchFunfacts)
     }
-  }, [socket, roomId])
+  }, [socket, roomId, joinedMode])
 
   async function fetchFunfacts(){
     const { data } = await http.get(`/rooms/${roomId}/funfacts`)
     setFunfacts(data)
   }
 
-  async function joinAsParticipant(){
-    await http.post(`/rooms/${roomId}/join`)
+  async function joinAsParticipant(pin = ''){
+    await http.post(`/rooms/${roomId}/join`, { pin })
+    // Emit room:join to get participant privileges
     socket.emit('room:join', { roomId: Number(roomId) })
     setJoinedMode('participant')
     fetchFunfacts()

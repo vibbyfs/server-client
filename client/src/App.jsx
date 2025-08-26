@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router'
 import Login from './features/auth/Login.jsx'
 import Register from './features/auth/Register.jsx'
-import Rooms from './features/rooms/Rooms.jsx'
+import { RoomsList } from './features/room/RoomsList.jsx'
 import Room from './features/room/Room.jsx'
 import LandingPage from './components/LandingPage.jsx'
 import { useAuth } from './contexts/AuthContext.jsx'
@@ -48,9 +48,7 @@ export default function App(){
           <Route path="/rooms" element={
             <Protected>
               <AuthenticatedHeader />
-              <main className="max-w-6xl mx-auto px-4 py-6">
-                <Rooms />
-              </main>
+              <RoomsList />
             </Protected>
           } />
           <Route path="/rooms/:id" element={
@@ -63,7 +61,7 @@ export default function App(){
           } />
           
           {/* Catch all */}
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="*" element={<Navigate to="/rooms" />} />
         </Routes>
       </ErrorBoundary>
       </BrowserRouter>

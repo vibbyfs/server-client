@@ -9,6 +9,17 @@ module.exports = (sequelize, DataTypes) => {
     drawFrequencyUnit: { type: DataTypes.ENUM('daily','weekly','monthly'), allowNull: false, defaultValue: 'weekly' },
     tenorRounds: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 10 },
     startAt: { type: DataTypes.DATE, allowNull: true },
-    allowSpectator: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }
-  }, { tableName: 'rooms' });
+    allowSpectator: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    pinHash: { type: DataTypes.STRING, allowNull: true }
+  }, { 
+    tableName: 'rooms',
+    defaultScope: {
+      attributes: { exclude: ['pinHash'] } // Never return pinHash by default
+    },
+    scopes: {
+      withPin: {
+        attributes: { include: ['pinHash'] }
+      }
+    }
+  });
 };

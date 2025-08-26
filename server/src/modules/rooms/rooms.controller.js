@@ -2,22 +2,87 @@ const { listRooms, findRoomById } = require('../../repositories/roomRepo');
 const { countByRoom, getParticipants, joinRoom } = require('../../repositories/participantRepo');
 const { listWinners } = require('../../repositories/winnerRepo');
 const { Op } = require('sequelize');
+const bcrypt = require('bcrypt');
 
 async function getRooms(req, res) {
   try {
     const { sort, order, ...filters } = req.query;
-    const data = await listRooms(filters, [sort, (order || 'DESC').toUpperCase()]);
+    const data = await listRooms(filters, [sort, (order || 'DESC').toUpperCase()], req.user.id);
     res.json(data);
   } catch (e) {
+    console.error('Get rooms error:', e);
     res.status(500).json({ message: 'Failed to load rooms' });
+  }
+}
+
+async function createRoom(req, res) {
+  try {
+    const { name, capacity, dues, drawFrequencyValue, drawFrequencyUnit, tenorRounds, allowSpectator, pin } = req.body;
+    
+    const { Room } = require('../../db/models');
+    
+    // Prepare room data
+    const roomData = {
+      name,
+      capacity,
+      dues,
+      drawFrequencyValue,
+      drawFrequencyUnit,
+      tenorRounds,
+      allowSpectator,
+      adminId: req.user.id, // Creator becomes admin
+      status: 'waiting'
+    };
+    
+    // Hash PIN if provided
+    if (pin && pin.trim()) {
+      roomData.pinHash = await bcrypt.hash(pin.trim(), 10);
+    }
+    
+    // Create room
+    const room = await Room.create(roomData);
+    
+    // Auto-join creator as first participant
+    await joinRoom(room.id, req.user.id);
+    
+    res.status(201).json({ 
+      id: room.id, 
+      name: room.name,
+      message: 'Room created successfully' 
+    });
+  } catch (e) {
+    console.error('Create room error:', e);
+    res.status(500).json({ message: 'Failed to create room' });
   }
 }
 
 async function postJoin(req, res) {
   try {
     const roomId = +req.params.id;
-    const room = await findRoomById(roomId);
+    const { pin } = req.body || {};
+    
+    console.log('Join room request:', { roomId, userId: req.user.id, hasPin: !!pin });
+    
+    // Get room with PIN hash for verification
+    const { Room } = require('../../db/models');
+    const room = await Room.scope('withPin').findByPk(roomId);
+    console.log('Room found:', room ? { id: room.id, name: room.name, hasPin: !!room.pinHash } : 'null');
+    
     if (!room) return res.status(404).json({ message: 'Room not found' });
+
+    // Verify PIN if room has one
+    if (room.pinHash) {
+      console.log('Room requires PIN, checking...');
+      if (!pin) {
+        return res.status(400).json({ message: 'PIN required to join this room' });
+      }
+      
+      const pinValid = await bcrypt.compare(pin, room.pinHash);
+      console.log('PIN valid:', pinValid);
+      if (!pinValid) {
+        return res.status(401).json({ message: 'Invalid PIN' });
+      }
+    }
 
     const { RoomParticipant } = require('../../db/models');
     const already = await RoomParticipant.findOne({ where: { roomId, userId: req.user.id } });
@@ -28,13 +93,21 @@ async function postJoin(req, res) {
 
     await joinRoom(roomId, req.user.id);
 
-    if (!room.adminId) { room.adminId = req.user.id; await room.save(); }
+    // Auto-assign admin if none exists (fallback)
+    if (!room.adminId) { 
+      room.adminId = req.user.id; 
+      await room.save(); 
+    }
 
     const newCount = await countByRoom(roomId);
-    if (newCount >= room.capacity && room.status === 'waiting') { room.status = 'ongoing'; await room.save(); }
+    if (newCount >= room.capacity && room.status === 'waiting') { 
+      room.status = 'ongoing'; 
+      await room.save(); 
+    }
 
     res.json({ ok: true });
   } catch (e) {
+    console.error('Join room error:', e);
     res.status(500).json({ message: 'Join failed' });
   }
 }
@@ -102,4 +175,11 @@ Tenor: ${room.tenorRounds} putaran, frekuensi: ${room.drawFrequencyValue} ${room
   }
 }
 
-module.exports = { getRooms, postJoin, getParticipantsRoute, getWinnersRoute, getFunfacts };
+module.exports = { 
+  getRooms, 
+  createRoom,
+  postJoin, 
+  getParticipantsRoute, 
+  getWinnersRoute, 
+  getFunfacts 
+};

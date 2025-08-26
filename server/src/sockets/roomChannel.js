@@ -3,8 +3,6 @@ const { getParticipants } = require('../repositories/participantRepo');
 const { listWinners } = require('../repositories/winnerRepo');
 const { bumpReaction, recentStats } = require('../repositories/reactionRepo');
 const { drawWinner } = require('../services/drawService');
-const { addUserMessage, addAssistantMessage } = require('../repositories/messageRepo');
-const { generateAI } = require('../services/aiService');
 
 const reactionWindows = new Map();
 
@@ -67,40 +65,6 @@ module.exports = function(io, socket) {
     } catch (e) {
       socket.emit('error', { message: 'Failed to draw' });
     }
-  });
-
-  socket.on('chat:send', async ({ roomId, content }) => {
-    try {
-      if (typeof content !== 'string') return;
-      const trimmed = content.trim();
-      if (!trimmed || trimmed.length > 1000) return;
-      const rp = await RoomParticipant.findOne({ where: { roomId, userId: socket.user.id } });
-      if (!rp) return socket.emit('error', { message: 'Spectators cannot chat' });
-
-      const msg = await addUserMessage(roomId, socket.user.id, trimmed);
-      io.to('room:'+roomId).emit('chat:new', {
-        id: msg.id, role: 'user', content: msg.content, createdAt: msg.createdAt, user: { id: socket.user.id, name: socket.user.name }
-      });
-
-      const triggers = trimmed.startsWith('/ai') || /(^|\s)@bot(\s|$)/i.test(trimmed);
-      if (triggers) {
-        const aiText = trimmed.replace(/^\/ai\s*/i, '');
-        const { listMessages } = require('../repositories/messageRepo');
-        const lastMsgs = await listMessages(roomId, null, 15);
-        const lines = ['Room: ' + (await Room.findByPk(roomId)).name, 'Catatan: Bot hanya obrolan, tidak memengaruhi undian.'];
-        lastMsgs.messages.forEach(m => lines.push(`${m.user?.name || 'Bot'}: ${m.content}`));
-        lines.push(`${socket.user.name}: ${aiText}`);
-        const reply = await generateAI(lines.join('\n'));
-        const botMsg = await addAssistantMessage(roomId, reply);
-        io.to('room:'+roomId).emit('chat:new', {
-          id: botMsg.id, role: 'assistant', content: reply, createdAt: botMsg.createdAt, user: { id: null, name: 'Arisan Bot' }
-        });
-      }
-    } catch (e) {}
-  });
-
-  socket.on('chat:typing', ({ roomId }) => {
-    io.to('room:'+roomId).emit('chat:typing', { userId: socket.user.id, at: Date.now() });
   });
 
   socket.on('reaction:send', async ({ roomId, emoji }) => {
