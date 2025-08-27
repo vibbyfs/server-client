@@ -32,8 +32,8 @@ export default function Room() {
     return (
       <div className="min-h-screen bg-gradient-luxury">
         <Navbar />
-        <div className="pt-20 flex items-center justify-center min-h-screen">
-          <div className="text-center animate-fadeInUp">
+        <div className="pt-20 flex items-center justify-center min-h-screen px-4 lg:px-8">
+          <div className="text-center animate-fadeInUp p-6">
             <div className="w-16 h-16 bg-gradient-luxury rounded-2xl mx-auto mb-6 flex items-center justify-center animate-pulse">
               <svg className="w-8 h-8 text-luxury-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -71,10 +71,10 @@ export default function Room() {
       <Navbar />
       <ReactionLayer roomId={id} />
       
-      <div className="pt-20 pb-8">
+      <div className="pt-20 pb-8 px-4 lg:px-8">
         <div className="container-modern">
           {/* Breadcrumb */}
-          <div className="mb-6 animate-fadeInUp">
+          <div className="mb-6 p-4 animate-fadeInUp">
             <Link 
               to="/rooms" 
               className="inline-flex items-center text-luxury-gray hover:text-luxury-gold transition-colors group font-inter"
@@ -87,7 +87,7 @@ export default function Room() {
           </div>
 
           {/* Room Header */}
-          <div className="card-luxury mb-8 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+          <div className="card-luxury mb-8 p-6 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-3 mb-3">
@@ -97,7 +97,7 @@ export default function Room() {
                   </span>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm p-4">
                   <div>
                     <span className="text-luxury-gray font-inter">Peserta</span>
                     <div className="font-semibold text-luxury-black font-inter">
@@ -131,7 +131,7 @@ export default function Room() {
                 </div>
 
                 {/* Progress Bar */}
-                <div className="mt-4">
+                <div className="mt-4 p-4">
                   <div className="flex justify-between text-sm text-luxury-gray font-inter mb-2">
                     <span>Progress Arisan</span>
                     <span>{state.winners?.length || 0}/{state.room.capacity} selesai</span>
@@ -146,42 +146,50 @@ export default function Room() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 p-4">
                 <QuickReactions onSend={sendReaction} />
                 
                 {isHost && state.room.status !== 'completed' && (
-                  <button 
-                    onClick={handleDrawStart}
-                    className="btn-luxury-secondary group"
-                    disabled={shake}
-                  >
-                    {shake ? (
-                      <>
-                        <svg className="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Mengkocok...
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Kocok Undian
-                      </>
+                  <>
+                    <button 
+                      onClick={handleDrawStart}
+                      className="btn-luxury-secondary group"
+                      disabled={shake || (state.participants && state.participants.length < 2)}
+                      title={state.participants && state.participants.length < 2 ? 'Room must have at least 2 participants to start drawing' : 'Start the draw'}
+                    >
+                      {shake ? (
+                        <>
+                          <svg className="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          Mengkocok...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          Kocok Undian
+                        </>
+                      )}
+                    </button>
+                    {state.participants && state.participants.length < 2 && (
+                      <p className="text-xs text-luxury-gold font-medium mt-2 text-center">
+                        Minimal 2 peserta untuk memulai pengocokan
+                      </p>
                     )}
-                  </button>
+                  </>
                 )}
               </div>
             </div>
           </div>
 
           {/* Main Content Grid */}
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-8 p-4">
             {/* Left Column */}
             <div className="lg:col-span-2 space-y-8">
               {/* Draw Animation */}
-              <div className="card-luxury animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+              <div className="card-luxury p-6 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
                 <div className="flex items-center space-x-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-luxury rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-luxury-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,7 +204,7 @@ export default function Room() {
               </div>
 
               {/* Fun Facts */}
-              <div className="card-luxury animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
+              <div className="card-luxury p-6 animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
                 <div className="flex items-center space-x-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-luxury rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-luxury-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,9 +233,9 @@ export default function Room() {
             </div>
 
             {/* Right Column */}
-            <div className="space-y-8">
+            <div className="space-y-8 p-4">
               {/* Participants */}
-              <div className="card-luxury animate-fadeInUp" style={{ animationDelay: '0.5s' }}>
+              <div className="card-luxury p-6 animate-fadeInUp" style={{ animationDelay: '0.5s' }}>
                 <div className="flex items-center space-x-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-luxury rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-luxury-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,7 +290,7 @@ export default function Room() {
               </div>
 
               {/* Winners History */}
-              <div className="card-luxury animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
+              <div className="card-luxury p-6 animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
                 <div className="flex items-center space-x-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-luxury rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-luxury-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

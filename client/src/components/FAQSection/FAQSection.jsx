@@ -18,7 +18,7 @@ const FAQSection = () => {
     },
     {
       question: "What is the minimum number of participants required to begin?",
-      answer: "Exclusive gatherings can commence with as few as 3 participants. However, we recommend 5-12 participants for optimal experience. There are no upper limits, making our platform suitable for intimate private groups as well as large-scale corporate consortiums and high-society gatherings."
+      answer: "Exclusive gatherings can commence with as few as 2 participants. However, we recommend 5-12 participants for optimal experience. There are no upper limits, making our platform suitable for intimate private groups as well as large-scale corporate consortiums and high-society gatherings."
     },
     {
       question: "Can I observe proceedings without active participation?",

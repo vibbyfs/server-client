@@ -51,9 +51,15 @@ module.exports = function(io, socket) {
   socket.on('draw:start', async ({ roomId }) => {
     try {
       const room = await Room.findByPk(roomId);
-      if (!room) return;
+      if (!room) return socket.emit('error', { message: 'Room not found' });
       if (room.adminId !== socket.user.id) return socket.emit('error', { message: 'Only host can draw' });
       if (room.status === 'complete') return socket.emit('error', { message: 'Room complete' });
+
+      // Check minimum participants (at least 2 for a meaningful draw)
+      const participantCount = await RoomParticipant.count({ where: { roomId } });
+      if (participantCount < 2) {
+        return socket.emit('error', { message: 'Room must have at least 2 participants to start drawing' });
+      }
 
       io.to('room:'+roomId).emit('draw:begin');
 
