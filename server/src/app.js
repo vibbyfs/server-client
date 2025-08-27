@@ -16,5 +16,6 @@ app.use('/api', require('./modules/auth/auth.routes'));
 app.use('/api', authMiddleware, require('./modules/rooms/rooms.routes'));
 app.use('/api', authMiddleware, require('./modules/chat/chat.routes'));
 app.use('/api', authMiddleware, require('./modules/share/share.routes'));
+app.use('/api/insights', authMiddleware, require('./modules/insights/insights.routes'));
 
 module.exports = app;

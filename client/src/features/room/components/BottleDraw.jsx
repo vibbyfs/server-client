@@ -5,8 +5,14 @@ export default function BottleDraw({ startSignal, winnerName }){
   const [rotation, setRotation] = React.useState(0)
   const [showConfetti, setShowConfetti] = React.useState(false)
 
+  // Debug logs
   React.useEffect(() => {
-    if(startSignal){
+    console.log('BottleDraw props:', { startSignal, winnerName, phase });
+  }, [startSignal, winnerName, phase]);
+
+  React.useEffect(() => {
+    if(startSignal && phase === 'idle'){
+      console.log('Starting animation...');
       setPhase('spinning')
       setRotation(0)
 
@@ -37,14 +43,24 @@ export default function BottleDraw({ startSignal, winnerName }){
   }, [startSignal])
 
   React.useEffect(() => {
-    if(winnerName && phase==='reveal'){
-      setTimeout(() => {
-        setPhase('celebration')
-        setShowConfetti(true)
-        setTimeout(() => setShowConfetti(false), 3000)
-      }, 1000)
+    // Immediately show winner if available during reveal phase
+    if(winnerName && (phase === 'reveal' || phase === 'slowing')){
+      console.log('BottleDraw: Winner revealed:', winnerName); // Debug log
+      setPhase('celebration')
+      setShowConfetti(true)
+      setTimeout(() => setShowConfetti(false), 3000)
     }
   }, [winnerName, phase])
+
+  // Reset phase when startSignal becomes false
+  React.useEffect(() => {
+    if (!startSignal && phase !== 'idle') {
+      setTimeout(() => {
+        setPhase('idle')
+        setRotation(0)
+      }, 5000) // Give time for celebration
+    }
+  }, [startSignal, phase])
 
   return (
     <div className="w-full flex flex-col items-center relative">
@@ -147,10 +163,20 @@ export default function BottleDraw({ startSignal, winnerName }){
           <p className="text-luxury-gray font-medium animate-pulse">Melambat...</p>
         )}
         {phase === 'reveal' && (
-          <p className="text-luxury-gold font-semibold animate-bounce">Mengungkap pemenang...</p>
+          <div className="space-y-2">
+            <p className="text-luxury-gold font-semibold animate-bounce">Mengungkap pemenang...</p>
+            {winnerName && (
+              <p className="text-2xl font-bold text-luxury-black">🏆 {winnerName} 🏆</p>
+            )}
+          </div>
         )}
         {phase === 'celebration' && (
-          <p className="text-luxury-gold font-bold animate-pulse">🎊 Selamat! 🎊</p>
+          <div className="space-y-2">
+            <p className="text-luxury-gold font-bold animate-pulse">🎊 Selamat! 🎊</p>
+            {winnerName && (
+              <p className="text-2xl font-bold text-luxury-black">{winnerName}</p>
+            )}
+          </div>
         )}
       </div>
     </div>

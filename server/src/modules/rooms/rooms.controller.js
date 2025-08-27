@@ -17,6 +17,8 @@ async function getRooms(req, res) {
 
 async function createRoom(req, res) {
   try {
+    console.log('Create room request:', { body: req.body, userId: req.user?.id });
+    
     const { name, capacity, dues, drawFrequencyValue, drawFrequencyUnit, tenorRounds, allowSpectator, pin } = req.body;
     
     const { Room } = require('../../db/models');
@@ -34,6 +36,8 @@ async function createRoom(req, res) {
       status: 'waiting'
     };
     
+    console.log('Room data to create:', roomData);
+    
     // Hash PIN if provided
     if (pin && pin.trim()) {
       roomData.pinHash = await bcrypt.hash(pin.trim(), 10);
@@ -41,9 +45,11 @@ async function createRoom(req, res) {
     
     // Create room
     const room = await Room.create(roomData);
+    console.log('Room created successfully:', { id: room.id, name: room.name });
     
     // Auto-join creator as first participant
     await joinRoom(room.id, req.user.id);
+    console.log('Creator auto-joined room:', { roomId: room.id, userId: req.user.id });
     
     res.status(201).json({ 
       id: room.id, 
@@ -52,7 +58,8 @@ async function createRoom(req, res) {
     });
   } catch (e) {
     console.error('Create room error:', e);
-    res.status(500).json({ message: 'Failed to create room' });
+    console.error('Create room error stack:', e.stack);
+    res.status(500).json({ message: 'Failed to create room', error: e.message });
   }
 }
 
