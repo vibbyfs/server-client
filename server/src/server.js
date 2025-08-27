@@ -15,7 +15,7 @@ async function start() {
 
   const server = http.createServer(app);
   const io = new Server(server, {
-    cors: { origin: config.corsOrigin, credentials: true }
+    cors: { origin: '*', credentials: false }
   });
 
   attachSockets(io);

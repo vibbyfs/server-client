@@ -4,7 +4,7 @@ const config = require('./config');
 const { authMiddleware } = require('./middlewares/auth');
 
 const app = express();
-app.use(cors({ origin: config.corsOrigin, credentials: true }));
+app.use(cors({ origin: '*', credentials: false }));
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/health', (req, res) => res.json({ ok: true }));
