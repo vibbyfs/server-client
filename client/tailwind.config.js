@@ -8,34 +8,28 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        primary: ['Playfair Display', 'serif'],
+        secondary: ['Inter', 'sans-serif'],
       },
       colors: {
-        // Teal colors
-        teal: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
+        // Christie's Luxury Color Palette
+        primary: {
+          black: '#000000',
+          white: '#ffffff',
         },
-        // Coral colors
-        coral: {
-          50: '#fef7f0',
-          100: '#feecdc',
-          200: '#fcd9bd',
-          300: '#fdba8c',
-          400: '#ff8a4c',
-          500: '#ff5722',
-          600: '#ea580c',
-          700: '#c2410c',
-          800: '#9a3412',
-          900: '#7c2d12',
+        secondary: {
+          gray: '#f8f8f8',
+        },
+        accent: {
+          gold: '#d4af37',
+          'gold-light': '#f4e87c',
+        },
+        text: {
+          dark: '#1a1a1a',
+          light: '#666666',
+        },
+        border: {
+          DEFAULT: '#e5e5e5',
         },
       },
       animation: {
@@ -72,6 +66,12 @@ export default {
       },
       screens: {
         'xs': '475px',
+      },
+      boxShadow: {
+        'luxury-sm': '0 1px 2px rgba(0, 0, 0, 0.05)',
+        'luxury-md': '0 4px 6px rgba(0, 0, 0, 0.07)',
+        'luxury-lg': '0 10px 15px rgba(0, 0, 0, 0.1)',
+        'luxury-xl': '0 20px 25px rgba(0, 0, 0, 0.15)',
       },
     },
   },

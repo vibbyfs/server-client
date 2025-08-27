@@ -44,66 +44,75 @@ export function JoinRoomModal({ isOpen, onClose, room, onSuccess }) {
   if (!isOpen || !room) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Join Room</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 p-4 backdrop-blur-lg">
+      <div className="bg-white rounded-xl max-w-md w-full shadow-2xl border border-gray-200">
+        <div className="p-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold heading-primary text-black">Join Room</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-2xl"
+              className="text-gray-400 hover:text-black text-3xl font-light transition-colors cursor-pointer"
             >
               ×
             </button>
           </div>
 
-          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-semibold text-gray-900">{room.name}</h3>
-            <div className="text-sm text-gray-600 mt-1">
-              <p>Capacity: {room.capacity} participants</p>
-              <p>Dues: Rp {room.dues?.toLocaleString()}</p>
-              <p>Frequency: {room.drawFrequencyValue} {room.drawFrequencyUnit}</p>
+          <div className="card-luxury p-6 mb-6 bg-gray-50/50">
+            <h3 className="font-semibold heading-secondary text-black text-lg mb-3">{room.name}</h3>
+            <div className="space-y-2 text-sm text-luxury">
+              <div className="flex justify-between">
+                <span className="font-medium">Capacity:</span>
+                <span className="text-black">{room.capacity} participants</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Dues:</span>
+                <span className="text-black">Rp {room.dues?.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Frequency:</span>
+                <span className="text-black">{room.drawFrequencyValue} {room.drawFrequencyUnit}</span>
+              </div>
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleJoin} className="space-y-4">
+          <form onSubmit={handleJoin} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Room PIN {room.hasPin ? '*' : '(if required)'}
+              <label className="block text-sm font-medium text-black mb-3">
+                Room PIN {room.hasPin ? <span className="text-red-500">*</span> : <span className="text-luxury">(if required)</span>}
               </label>
               <input
                 type="password"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="input-luxury rounded-lg"
                 placeholder="Enter room PIN"
                 required={room.hasPin}
               />
               {room.hasPin && (
-                <p className="text-xs text-red-600 mt-1">
+                <p className="text-xs text-red-600 mt-2 font-medium">
                   This room requires a PIN to join.
                 </p>
               )}
             </div>
 
-            <div className="flex gap-3 pt-2">
+            <div className="flex gap-4 pt-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="btn-luxury-secondary flex-1 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+                className="btn-luxury-primary flex-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
               >
                 {loading ? 'Joining...' : 'Join Room'}
               </button>

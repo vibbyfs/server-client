@@ -1,76 +1,240 @@
 @import "tailwindcss";
 
-/* Design System - ArisanKu Modern */
+/* Design System - Christie's Inspired Luxury */
 :root {
-  /* Primary Colors - Teal */
-  --teal-50: #f0fdfa;
-  --teal-100: #ccfbf1;
-  --teal-200: #99f6e4;
-  --teal-300: #5eead4;
-  --teal-400: #2dd4bf;
-  --teal-500: #14b8a6;
-  --teal-600: #0d9488;
-  --teal-700: #0f766e;
-  --teal-800: #115e59;
-  --teal-900: #134e4a;
+  /* Luxury Color Palette - Inspired by Christie's */
+  --primary-black: #000000;
+  --primary-white: #ffffff;
+  --secondary-gray: #f8f8f8;
+  --accent-gold: #d4af37;
+  --accent-gold-light: #f4e87c;
+  --text-dark: #1a1a1a;
+  --text-light: #666666;
+  --border-color: #e5e5e5;
 
-  /* Accent Colors - Coral */
-  --coral-50: #fef7f0;
-  --coral-100: #feecdc;
-  --coral-200: #fcd9bd;
-  --coral-300: #fdba8c;
-  --coral-400: #ff8a4c;
-  --coral-500: #ff5722;
-  --coral-600: #ea580c;
-  --coral-700: #c2410c;
-  --coral-800: #9a3412;
-  --coral-900: #7c2d12;
+  /* Typography */
+  --font-primary: 'Playfair Display', serif;
+  --font-secondary: 'Inter', sans-serif;
 
-  /* Neutral Colors */
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
 
-  /* Background & Surface */
-  --bg-primary: #fefefe;
-  --bg-secondary: #f8fafc;
-  --surface: rgba(255, 255, 255, 0.8);
-  --surface-hover: rgba(255, 255, 255, 0.9);
-  
-  /* Glass Effect */
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --glass-shadow: 0 4px 16px rgba(31, 38, 135, 0.15);
-  
-  /* Spacing & Layout */
-  --container-max: 1200px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  
+  /* Shadows - Subtle luxury */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Dark Mode */
 [data-theme="dark"] {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --surface: rgba(30, 41, 59, 0.8);
-  --surface-hover: rgba(30, 41, 59, 0.9);
-  --glass-bg: rgba(30, 41, 59, 0.3);
-  --glass-border: rgba(148, 163, 184, 0.1);
-  --glass-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  --primary-black: #ffffff;
+  --primary-white: #000000;
+  --secondary-gray: #1a1a1a;
+  --text-dark: #f8f8f8;
+  --text-light: #cccccc;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-secondary);
+  background: var(--primary-white);
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+[data-theme="dark"] body {
+  background: var(--primary-black);
+  color: var(--text-dark);
+}
+
+/* Typography */
+.heading-primary {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.heading-secondary {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.text-luxury {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  color: var(--text-light);
+}
+
+/* Luxury Button Styles */
+.btn-luxury-primary {
+  background: var(--primary-black);
+  color: var(--primary-white);
+  font-family: var(--font-secondary);
+  font-weight: 500;
+  padding: 0.875rem 2rem;
+  border: 1px solid var(--primary-black);
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-luxury-primary:hover {
+  background: var(--accent-gold);
+  color: var(--primary-black);
+  border-color: var(--accent-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-luxury-secondary {
+  background: transparent;
+  color: var(--primary-black);
+  font-family: var(--font-secondary);
+  font-weight: 500;
+  padding: 0.875rem 2rem;
+  border: 1px solid var(--border-color);
+  transition: var(--transition-smooth);
+}
+
+.btn-luxury-secondary:hover {
+  background: var(--primary-black);
+  color: var(--primary-white);
+  border-color: var(--primary-black);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Luxury Card Styles */
+.card-luxury {
+  background: var(--primary-white);
+  border: 1px solid var(--border-color);
+  transition: var(--transition-smooth);
+  position: relative;
+}
+
+.card-luxury:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--accent-gold);
+}
+
+/* Luxury Input Styles */
+.input-luxury {
+  background: var(--primary-white);
+  border: 1px solid var(--border-color);
+  padding: 0.875rem 1rem;
+  font-family: var(--font-secondary);
+  transition: var(--transition-smooth);
+  width: 100%;
+}
+
+.input-luxury:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
+}
+
+/* Luxury Layout */
+.container-luxury {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .container-luxury {
+    padding: 0 2rem;
+  }
+}
+
+/* Luxury Grid */
+.grid-luxury {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .grid-luxury {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-luxury {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Luxury Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes slideInLeftToRight {
+  from {
+    opacity: 0;
+    transform: translateX(-100px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-slideInLeftToRight {
+  animation: slideInLeftToRight 0.8s ease-out;
+  animation-fill-mode: both;
+}
+
+/* Luxury Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--secondary-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-gold);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-black);
 }
 
 /* Base Styles */
